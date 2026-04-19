@@ -1,0 +1,30 @@
+name: PR Validation
+
+on:
+  pull_request:
+    branches: [ main, dev, predev ]
+
+jobs:
+  build_and_validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            9.0.x
+            
+      - name: Restore dependencies
+        run: dotnet restore src/AuthForge/AuthForge.csproj
+        
+      - name: Build Library
+        run: dotnet build src/AuthForge/AuthForge.csproj --no-restore --configuration Release
+        
+      - name: Restore Sample
+        run: dotnet restore src/AuthForge.Sample/AuthForge.Sample.csproj
+        
+      - name: Build Sample
+        run: dotnet build src/AuthForge.Sample/AuthForge.Sample.csproj --no-restore --configuration Release

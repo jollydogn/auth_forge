@@ -1,0 +1,34 @@
+name: Publish AuthForge to NuGet
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            9.0.x
+            
+      - name: Restore dependencies
+        run: dotnet restore src/AuthForge/AuthForge.csproj
+        
+      - name: Build
+        run: dotnet build src/AuthForge/AuthForge.csproj -c Release --no-restore
+        
+      - name: Pack
+        run: dotnet pack src/AuthForge/AuthForge.csproj -c Release --no-build -o out
+        
+      - name: Push to NuGet
+        # Make sure to set NUGET_API_KEY in your GitHub Repository Secrets
+        run: dotnet nuget push "out/*.nupkg" -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
