@@ -1,11 +1,11 @@
 # AuthForge 🛡️
 
-[![.NET](https://img.shields.io/badge/.NET-8.0%20|%209.0%20|%2010.0-512BD4?style=flat-square&logo=dotnet)](https://dotnet.microsoft.com/)
+[![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?style=flat-square&logo=dotnet)](https://dotnet.microsoft.com/)
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 [![NuGet](https://img.shields.io/badge/NuGet-AuthForge-blue?style=flat-square&logo=nuget)](https://www.nuget.org/packages/AuthForge)
 [![Build](https://github.com/jollydogn/auth_forge/actions/workflows/pr-validation.yml/badge.svg)](https://github.com/jollydogn/auth_forge/actions)
 
-A professional, plug-and-play **Keycloak Authentication and Authorization SDK** for ASP.NET Core (.NET 8.0, 9.0 and 10.0). 
+A professional, plug-and-play **Keycloak Authentication and Authorization SDK** for ASP.NET Core **(.NET 10.0 Only)**. 
 AuthForge strictly follows SOLID principles and allows you to seamlessly integrate Keycloak identity management, token fetching, group/role mappings, and dynamic native `.NET Claim` transformations — all via a clean, Dependency-Injected API. 
 
 ---
@@ -136,6 +136,38 @@ public class AnalyticsService
     }
 }
 ```
+
+---
+
+## 🗄️ Local Database Synchronization (Entity Framework Core)
+
+AuthForge uniquely bridges the gap between Keycloak's isolated databases and your native application. By utilizing **Local User Synchronization**, you can spawn `AuthForgeUser`, `AuthForgeRole`, and `AuthForgeGroup` physical tables directly inside your SQL Server or PostgreSQL database. This allows you to execute native `LINQ Queries`, perform `.Include()` join operations on your custom tables (like Orders and Carts), and query without ever bottlenecking Keycloak!
+
+Add the sets to your DbContext and inject the schema builder:
+
+```csharp
+using AuthForge.EntityFrameworkCore;
+using AuthForge.Entities;
+
+public class AppDbContext : DbContext
+{
+    public DbSet<AuthForgeUser> AuthForgeUsers { get; set; }
+    public DbSet<AuthForgeRole> AuthForgeRoles { get; set; }
+    public DbSet<AuthForgeGroup> AuthForgeGroups { get; set; }
+    public DbSet<AuthForgeUserRole> AuthForgeUserRoles { get; set; }
+    public DbSet<AuthForgeUserGroup> AuthForgeUserGroups { get; set; }
+    
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+        
+        // Magically configures the mappings, Primary Keys, Maximum Lengths, and cascade limits!
+        builder.ConfigureAuthForge(tablePrefix: "AuthForge_", schema: null);
+    }
+}
+```
+
+Simply run `dotnet ef migrations add AddAuthForgeEntities` and keep them in-sync with your webhooks or Managers!
 
 ---
 
