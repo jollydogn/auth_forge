@@ -14,8 +14,6 @@ namespace AuthForge.Permissions;
 /// Hosted service that runs on application startup.
 /// Discovers all PermissionDefinitionProviders, collects their definitions,
 /// and seeds them into the database automatically (insert-if-not-exists).
-/// 
-/// This is the equivalent of ABP's IPermissionDataSeeder.
 /// </summary>
 public class AuthForgePermissionDataSeeder<TDbContext> : IHostedService
     where TDbContext : DbContext
