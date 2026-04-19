@@ -3,6 +3,7 @@ using AuthForge.Clients;
 using AuthForge.Configuration;
 using AuthForge.Managers.Auth;
 using AuthForge.Managers.Groups;
+using AuthForge.Managers.Permissions;
 using AuthForge.Managers.Roles;
 using AuthForge.Managers.Users;
 using AuthForge.Services;
@@ -65,6 +66,7 @@ public static class AuthForgeServiceCollectionExtensions
         services.AddScoped<IUsersManager, UsersManager>();
         services.AddScoped<IRolesManager, RolesManager>();
         services.AddScoped<IGroupsManager, GroupsManager>();
+        services.AddScoped<IPermissionsManager, PermissionsManager>();
 
         // 4. JWT Kimlik Doğrulama Katmanı
         if (!string.IsNullOrEmpty(authOptions.Authority))
