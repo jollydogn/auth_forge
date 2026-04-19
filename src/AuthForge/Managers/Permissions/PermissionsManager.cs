@@ -97,6 +97,6 @@ public class PermissionsManager : IPermissionsManager
     public virtual async Task<IEnumerable<RoleResponse>> GetPermissionsOfRoleAsync(string roleName)
     {
         var endpoint = $"admin/realms/{_options.Realm}/roles/{roleName}/composites";
-        return await _adminClient.GetListAsync<RoleResponse>(endpoint);
+        return await _adminClient.GetAsync<IEnumerable<RoleResponse>>(endpoint) ?? Enumerable.Empty<RoleResponse>();
     }
 }
