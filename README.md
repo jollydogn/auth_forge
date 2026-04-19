@@ -171,9 +171,9 @@ Simply run `dotnet ef migrations add AddAuthForgeEntities` and keep them in-sync
 
 ---
 
-## 🛡️ ABP-Style Permission System
+## 🛡️ Code-First Permission System
 
-AuthForge comes with a built-in, code-first permission definition system inspired by the **ABP Framework**. This allows you to define your permissions and groups purely in C# code. On startup, these permissions are automatically seeded into your Local Synchronization Database.
+AuthForge comes with a built-in, code-first permission definition system. This allows you to define your permissions and groups purely in C# code. On startup, these permissions are automatically seeded into your Local Synchronization Database.
 
 ### 1. Define Your Permissions
 

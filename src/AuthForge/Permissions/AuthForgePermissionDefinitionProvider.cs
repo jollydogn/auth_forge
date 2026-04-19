@@ -2,7 +2,6 @@ namespace AuthForge.Permissions;
 
 /// <summary>
 /// Base class that consumers inherit from to declare their permissions.
-/// ABP Framework's PermissionDefinitionProvider equivalent.
 /// 
 /// Usage:
 /// <code>
