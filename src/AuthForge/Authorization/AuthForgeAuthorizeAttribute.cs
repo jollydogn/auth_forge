@@ -17,4 +17,15 @@ public class AuthForgeAuthorizeAttribute : AuthorizeAttribute
     public AuthForgeAuthorizeAttribute(string policy) : base(policy) 
     { 
     }
+
+    /// <summary>
+    /// Fine-grained Yetkilendirme (Permissions) için Semantic yapay alias.
+    /// Keycloak Composite Role mimarisi sayesinde 'Permissions = "article-create"' ile 'Roles = "article-create"' teknik olarak aynı işi yapar.
+    /// Consumer'ların [AuthForgeAuthorize(Permissions="...")] diyebilmesi için eklenmiştir.
+    /// </summary>
+    public string Permissions
+    {
+        get => base.Roles ?? string.Empty;
+        set => base.Roles = value;
+    }
 }
