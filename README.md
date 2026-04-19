@@ -171,6 +171,74 @@ Simply run `dotnet ef migrations add AddAuthForgeEntities` and keep them in-sync
 
 ---
 
+## 🛡️ ABP-Style Permission System
+
+AuthForge comes with a built-in, code-first permission definition system inspired by the **ABP Framework**. This allows you to define your permissions and groups purely in C# code. On startup, these permissions are automatically seeded into your Local Synchronization Database.
+
+### 1. Define Your Permissions
+
+Create a class that inherits from `AuthForgePermissionDefinitionProvider` and override the `Define` method:
+
+```csharp
+using AuthForge.Permissions;
+
+public class OrderPermissionDefinitionProvider : AuthForgePermissionDefinitionProvider
+{
+    public override void Define(AuthForgePermissionDefinitionContext context)
+    {
+        // 1. Create a logical group
+        var orderGroup = context.AddGroup("OrderManagement", "Order Management");
+        
+        // 2. Add top-level permission
+        var rootPermission = orderGroup.AddPermission("Orders", "Orders Access");
+        
+        // 3. Add fine-grained child permissions
+        rootPermission.AddChild("Orders.Create", "Create Order");
+        rootPermission.AddChild("Orders.Edit", "Edit Order");
+        rootPermission.AddChild("Orders.Delete", "Delete Order");
+    }
+}
+```
+
+### 2. Register the Permission System
+
+In your `Program.cs`, simply call `AddAuthForgePermissions` and pass your local `DbContext`. This will automatically scan your assembly for providers and register the Auto-Seeder background service.
+
+```csharp
+// Scan the current assembly and seed into AppDbContext
+builder.Services.AddAuthForgePermissions<AppDbContext>(typeof(Program).Assembly);
+```
+
+### 3. Protect Your APIs
+
+Use the `Permissions` alias inside the custom `[AuthForgeAuthorize]` attribute to explicitly enforce these permissions in your endpoints:
+
+```csharp
+[ApiController]
+[Route("api/orders")]
+public class OrderController : ControllerBase 
+{
+    [HttpPost("create")]
+    // Semantic translation: Checks if the user's Token or Local DB mapping contains "Orders.Create"
+    [AuthForgeAuthorize(Permissions = "Orders.Create")]
+    public IActionResult Create() => Ok();
+}
+```
+
+### 4. Assign Permissions (Grants)
+
+You can assign these granular permissions directly to Users or master Roles (Composite Role pattern) via the `IPermissionsManager`.
+
+```csharp
+// Assign "Orders.Create" permission to everyone who holds the "Manager" role
+await _permissionsManager.AssignPermissionToRoleAsync(
+    roleName: "Manager", 
+    permissionName: "Orders.Create"
+);
+```
+
+---
+
 ## 🔧 Core Domain Managers
 
 AuthForge provides robust SDK Managers to connect directly to the underlying Keycloak REST/Admin REST API. All of them are `virtual` methods—easily overriden if you require special company mappings!
