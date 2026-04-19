@@ -1,0 +1,6 @@
+@AuthForge.Sample_HostAddress = http://localhost:5111
+
+GET {{AuthForge.Sample_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
