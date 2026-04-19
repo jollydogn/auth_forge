@@ -1,3 +1,5 @@
+using System.Security.Claims;
+
 namespace AuthForge.Configuration;
 
 /// <summary>
